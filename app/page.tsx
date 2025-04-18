@@ -114,6 +114,18 @@ export default function Home() {
     }
   };
 
+
+  const checkDomainExists = async (hostname: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(hostname)}`);
+      const data = await response.json();
+      return data.Answer && data.Answer.length > 0;
+    } catch (error) {
+      console.error("DNS check failed:", error);
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
@@ -137,13 +149,24 @@ export default function Home() {
       return;
     }
 
+    //
+    // if (urlObj.hostname.endsWith(".net")) {
+    //   setIsValidationError(true);
+    //   setError("This URL is not allowed");
+    //   return;
+    // }
 
-    if (urlObj.hostname.endsWith(".net")) {
-      setIsValidationError(true);
-      setError("This URL is not allowed");
-      return;
+    try {
+      const domainExists = await checkDomainExists(urlObj.hostname);
+      if (!domainExists) {
+        setIsValidationError(true);
+        setError("This domain doesn't exist or isn't properly configured");
+        return;
+      }
+    } catch (err) {
+      console.error("Domain check error:", err);
+   
     }
-
 
     try {
       const res = await fetch("/api/shorten", {
@@ -183,7 +206,6 @@ export default function Home() {
     if (!shortUrl) return;
     navigator.clipboard.writeText(shortUrl);
     setCopySuccess(true);
-    setTimeout(() => setCopySuccess(false), 2000);
   };
 
   return (
