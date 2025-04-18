@@ -1,34 +1,56 @@
-import getCollection, { LINKS_COLLECTION } from "../../lib/mongo"
+import { NextRequest, NextResponse } from 'next/server';
+import getCollection, { LINKS_COLLECTION } from "../../lib/mongo";
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
     try {
-        const { alias, url } = await req.json()
+        const { alias, url } = await request.json();
 
+        // Validate input
         if (!alias || !url) {
-            return Response.json({ error: "Need both alias and URL" })
+            return NextResponse.json(
+                { error: "Both alias and URL are required" },
+                { status: 400 }
+            );
         }
 
-        const collection = await getCollection(LINKS_COLLECTION)
+        // Validate URL format
+        try {
+            new URL(url);
+        } catch {
+            return NextResponse.json(
+                { error: "Invalid URL format" },
+                { status: 400 }
+            );
+        }
 
-
-        const existing = await collection.findOne({ alias })
+        const collection = await getCollection(LINKS_COLLECTION);
+        const existing = await collection.findOne({ alias });
         if (existing) {
-            return Response.json({ error: "That alias is already being used" })
+            return NextResponse.json(
+                { error: "Alias already in use" },
+                { status: 409 }
+            );
         }
+
         await collection.insertOne({
             alias,
             url,
-            createdAt: new Date()
-        })
-        return Response.json({
+            createdAt: new Date(),
+            clicks: 0
+        });
+
+        const baseUrl = request.nextUrl.origin;
+        return NextResponse.json({
             success: true,
             alias,
-            shortUrl: `/alias/${alias}`
-        })
+            shortUrl: `${baseUrl}/alias/${alias}`
+        });
 
     } catch (error) {
-        console.error('Database error:', error)
-        return Response.json({ error: "Something went wrong" })
+        console.error('Database error:', error);
+        return NextResponse.json(
+            { error: "Internal server error" },
+            { status: 500 }
+        );
     }
 }
-
