@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import getCollection, { LINKS_COLLECTION } from '../lib/mongo'
 
-export async function GET(_request: Request, { params }: { params: { alias: string } }) {
+export async function GET(request: Request, { params }: { params: { alias: string } }) {
     const collection = await getCollection(LINKS_COLLECTION)
     const link = await collection.findOne({ alias: params.alias })
 
