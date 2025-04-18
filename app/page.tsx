@@ -114,32 +114,36 @@ export default function Home() {
     }
   };
 
-  const isValidUrl = (urlString: string) => {
-    if (!urlString.startsWith("http://") && !urlString.startsWith("https://")) {
-      return false;
-    }
-
-    try {
-      const urlObj = new URL(urlString);
-      if (urlObj.hostname.endsWith(".net")) {
-        return false;
-      }
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setShortUrl("");
+    setCopySuccess(false);
 
-    if (!isValidUrl(url)) {
+
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
       setIsValidationError(true);
       setError("URL must start with http:// or https:// to continue");
       return;
     }
+
+    let urlObj;
+    try {
+
+      urlObj = new URL(url);
+    } catch {
+      setIsValidationError(true);
+      setError("Invalid URL format");
+      return;
+    }
+
+
+    if (urlObj.hostname.endsWith(".net")) {
+      setIsValidationError(true);
+      setError("This URL is not allowed");
+      return;
+    }
+
 
     try {
       const res = await fetch("/api/shorten", {
@@ -179,6 +183,7 @@ export default function Home() {
     if (!shortUrl) return;
     navigator.clipboard.writeText(shortUrl);
     setCopySuccess(true);
+    setTimeout(() => setCopySuccess(false), 2000);
   };
 
   return (
@@ -231,10 +236,10 @@ export default function Home() {
                     <p style={styles.shortUrl}>
                       Your short URL:{" "}
                       <a href={shortUrl} target="_blank" style={styles.link}>
-                      {shortUrl}
-                    </a>
-                  </p>
-                <button type="button" onClick={copyToClipboard} style={styles.copyButton}>
+                        {shortUrl}
+                      </a>
+                    </p>
+                    <button type="button" onClick={copyToClipboard} style={styles.copyButton}>
                       Copy
                     </button>
                     {copySuccess && (
