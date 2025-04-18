@@ -10,7 +10,7 @@ export async function GET(request: Request): Promise<Response | void> {
 
     if (!link) {
         console.log(`Alias not found in DB: ${alias}`)
-        return new Response('That shortened link does not exist', { status: 404 })
+        return new Response('That shortened link does not exist')
     }
 
     console.log(`Redirecting ${alias} to ${link.url}`)

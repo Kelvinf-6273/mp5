@@ -10,19 +10,16 @@ export async function POST(req: Request) {
 
         const collection = await getCollection(LINKS_COLLECTION)
 
-        // Check if alias exists (case-sensitive)
+
         const existing = await collection.findOne({ alias })
         if (existing) {
             return Response.json({ error: "That alias is already being used" })
         }
-
-        // Insert with timestamp
         await collection.insertOne({
             alias,
             url,
             createdAt: new Date()
         })
-
         return Response.json({
             success: true,
             alias,
