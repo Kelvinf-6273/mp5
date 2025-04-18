@@ -14,25 +14,25 @@ export default function Home() {
     container: {
       maxWidth: "50%",
       margin: "0 auto",
-      padding: "2rem",
+      padding: "30px",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"
     },
     title: {
       textAlign: "center",
       color: "#cfaaf9",
-      marginBottom: "2rem",
+      marginBottom: "30px",
       fontSize: "40px",
       fontWeight: "bold"
 
     },
     form: {
       backgroundColor: "#cfaaf9",
-      padding: "2rem",
+      padding: "30px",
       borderRadius: "8px",
       boxShadow: "10px 10px 10px rgba(87, 5, 179, 1)"
     },
     inputGroup: {
-      marginBottom: "1.5rem"
+      marginBottom: "30px"
     },
     label: {
       display: "block",
@@ -44,11 +44,11 @@ export default function Home() {
     },
     input: {
       width: "100%",
-      padding: "0.75rem",
-      fontSize: "1rem",
+      padding: "13px",
+      fontSize: "20px",
       border: "3px solid #5705b3",
       borderRadius: "6px",
-      marginTop: "0.5rem"
+      marginTop: "12px"
     },
     button: {
       backgroundColor: "#5705b3",
@@ -63,7 +63,7 @@ export default function Home() {
       backgroundColor: "#f44336",
       fontWeight: "bold",
       padding: "10px",
-      fontSize: "calc(1px + 3vw)",
+      fontSize: "calc(1px + 2vw)",
       borderRadius: "6px",
       width: "100%",
       color: "white",
@@ -148,13 +148,6 @@ export default function Home() {
       setError("Invalid URL format");
       return;
     }
-
-    //
-    // if (urlObj.hostname.endsWith(".net")) {
-    //   setIsValidationError(true);
-    //   setError("This URL is not allowed");
-    //   return;
-    // }
 
     try {
       const domainExists = await checkDomainExists(urlObj.hostname);
