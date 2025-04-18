@@ -114,27 +114,30 @@ export default function Home() {
     }
   };
 
+  const isValidUrl = (urlString: string) => {
+    if (!urlString.startsWith("http://") && !urlString.startsWith("https://")) {
+      return false;
+    }
+
+    try {
+      const urlObj = new URL(urlString);
+      if (urlObj.hostname.endsWith(".net")) {
+        return false;
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setShortUrl("");
 
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    if (!isValidUrl(url)) {
       setIsValidationError(true);
       setError("URL must start with http:// or https:// to continue");
-      return;
-    }
-
-    try {
-      const urlObj = new URL(url);
-      if (urlObj.hostname.endsWith(".net")) {
-        setIsValidationError(true);
-        setError("This URL is not allowed");
-        return;
-      }
-    } catch {
-      setIsValidationError(true);
-      setError("Invalid URL format");
       return;
     }
 
@@ -228,10 +231,10 @@ export default function Home() {
                     <p style={styles.shortUrl}>
                       Your short URL:{" "}
                       <a href={shortUrl} target="_blank" style={styles.link}>
-                        {shortUrl}
-                      </a>
-                    </p>
-                    <button type="button" onClick={copyToClipboard} style={styles.copyButton}>
+                      {shortUrl}
+                    </a>
+                  </p>
+                <button type="button" onClick={copyToClipboard} style={styles.copyButton}>
                       Copy
                     </button>
                     {copySuccess && (
